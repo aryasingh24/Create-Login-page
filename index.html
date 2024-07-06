@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        /* General Styles */
+        body {
+            background-image: url('Custom Code');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            width: 300px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+        }
+
+        input[type=text], input[type=number], input[type=password] {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            outline: none;
+            text-align: center;
+            font-size: 1em;
+            width: 80%;
+            margin-bottom: 20px;
+            padding: 10px;
+            transition: border-bottom 0.3s ease;
+        }
+
+        input[type=text]:hover, input[type=number]:hover, input[type=password]:hover {
+            border-bottom: 2px solid black;
+        }
+
+        input[type=submit], input[type=button] {
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        input[type=submit]:hover, input[type=button]:hover {
+            background: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container hidden" id="page1">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <span id="errorMessage" class="error"></span>
+        <input type="submit" value="Login" onclick="LoginUser()" />
+        <br><br>
+        <b>If you don't have an account,</b>
+        <input type="button" onClick="showCreateAccount()" value="Create New" />
+    </div>
+
+    <div class="container hidden" id="page2">
+        <h1>Create Account</h1>
+        <input type="text" id="usernamee" placeholder="Name" />
+        <input type="password" id="passwordd" placeholder="Create password" />
+        <input type="text" id="email" placeholder="Email" />
+        <input type="number" id="phone" placeholder="Phone no." />
+        <b style="color:red;">Password must contain letters and numbers. It will not work without letters and numbers.</b>
+        <input type="submit" value="Create" onclick="AddRow()" />
+    </div>
+
+    <div class="container hidden" id="page3">
+        <h2>Your account has been successfully created. Login to your account</h2>
+        <input type="submit" onClick="showLogin()" value="Login" />
+    </div> 
+
+    <!-- Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()"value="Login">&times;</span>
+            <h2>Login Successful</h2>
+            <p>Welcome back!</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("page1").classList.remove("hidden");
+
+        function AddRow() {
+            var usernamee = document.getElementById("usernamee").value;
+            var passwordd = document.getElementById("passwordd").value;
+            var email = document.getElementById("email").value;
+            var phone = document.getElementById("phone").value;
+
+            if (usernamee === "" || passwordd === "" || email === "" || phone === "") {
+                return false;   
+            }
+            if(password.length<8){
+              alert("password must be 8 char");
+              return 
+            } 
+            else {
+                google.script.run.AddRecord(usernamee, passwordd, email, phone);
+                document.getElementById("page2").classList.add("hidden");
+                document.getElementById("page3").classList.remove("hidden");
+            }
+        }
+
+        function LoginUser() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            google.script.run.withSuccessHandler(function(output) {
+                if (output === 'TRUE') {
+                    showModal();
+                } else if (output === 'FALSE') {
+                    document.getElementById("errorMessage").innerHTML = "Username or Password Not Correct";
+                }
+            }).checkLogin(username, password);
+        }
+
+        function showCreateAccount() {
+            document.getElementById("page1").classList.add("hidden");
+            document.getElementById("page2").classList.remove("hidden");
+        }
+
+        function showLogin() {
+            document.getElementById("page3").classList.add("hidden");
+            document.getElementById("page1").classList.remove("hidden");
+        }
+
+        function showModal() {
+            document.getElementById("loginModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("loginModal").style.display = "none";
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            var modal = document.getElementById("loginModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
